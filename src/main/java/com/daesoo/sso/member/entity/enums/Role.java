@@ -1,7 +1,6 @@
 package com.daesoo.sso.member.entity.enums;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
