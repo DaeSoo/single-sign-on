@@ -46,6 +46,13 @@ public class User {
     @Column(nullable = false)
     private ProviderType providerType;
 
+    public String getRoleKey(){
+        return this.role.getKey();
+    }
+
+    public String getProviderTypeKey(){
+        return this.providerType.getKey();
+    }
 
     @Builder
     public User(String name, String email, String passwd, Role role, ProviderType providerType){
@@ -54,5 +61,10 @@ public class User {
         this.passwd = passwd;
         this.role  = role;
         this.providerType = providerType;
+    }
+
+    public User update(String name) {
+        this.name = name;
+        return this;
     }
 }
