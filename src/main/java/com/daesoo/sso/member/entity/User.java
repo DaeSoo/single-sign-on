@@ -33,17 +33,17 @@ public class User {
     private String email;
 
     /* 비밀번호 */
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String passwd;
 
     /* 권한 */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Role role;
 
     /* 공급자 */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private ProviderType providerType;
 
     public String getRoleKey(){

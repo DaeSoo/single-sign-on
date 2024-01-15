@@ -4,7 +4,6 @@ import com.daesoo.sso.member.entity.enums.Role;
 import com.daesoo.sso.member.service.CustomOAuth2UserService;
 import com.daesoo.sso.oidc.service.CustomOidcUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.client.OAuth2LoginConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,7 +21,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -61,7 +58,7 @@ public class SecurityConfig {
         return ((request, response, authentication) -> {
             DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
-            String id = defaultOAuth2User.getAttributes().get("id").toString();
+            String id = defaultOAuth2User.getAttributes().get("email").toString();
             String body = """
                     {"id":"%s"}
                     """.formatted(id);

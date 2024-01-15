@@ -2,9 +2,17 @@ server:
   port: 8081
 
 spring:
+  profiles:
+    include: oauth
+
+  thymeleaf:
+    prefix: classpath:templates/
+    check-template-location: true
+    suffix: .html
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -22,4 +30,6 @@ spring:
       client:
         registration:
           google:
+
             scope: profile, email
+            redirect-uri: http://localhost:8081/login/oauth2/code/google
