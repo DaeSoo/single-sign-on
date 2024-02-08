@@ -1,6 +1,5 @@
-package com.daesoo.sso.oauth2.service;
+package com.daesoo.sso.oauth2.dto;
 
-import com.daesoo.sso.member.entity.enums.ProviderType;
 import org.springframework.util.MultiValueMap;
 
 public interface OAuth2LoginParams {

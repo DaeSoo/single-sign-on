@@ -25,7 +25,7 @@ public class User {
     private Long id;
 
     /* 회원 이름 */
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String name;
 
     /* email(login id) */

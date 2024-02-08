@@ -1,5 +1,7 @@
-package com.daesoo.sso.login;
+package com.daesoo.sso.web.login;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,4 +12,6 @@ public class LoginController {
     public String home(){
         return "/login/custom-login";
     }
+
+
 }

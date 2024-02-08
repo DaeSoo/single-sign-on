@@ -1,7 +1,6 @@
-package com.daesoo.sso.member.dto;
+package com.daesoo.sso.oauth2.dto;
 
 import com.daesoo.sso.member.entity.User;
-import com.daesoo.sso.member.entity.enums.ProviderType;
 import com.daesoo.sso.member.entity.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +26,16 @@ public class OAuthAttributes {
         this.picture = picture;
     }
 
-    public static OAuthAttributes of(String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuthAttributes google(String userNameAttributeName, Map<String, Object> attributes) {
         return ofGoogle(userNameAttributeName, attributes);
+    }
+
+    public static OAuthAttributes naver(String userNameAttributeName, Map<String, Object> attributes, NaverAccount naverAccount) {
+        return ofNaver(userNameAttributeName, attributes, naverAccount);
+    }
+
+    public static OAuthAttributes kakao(String userNameAttributeName, Map<String, Object> attributes, KakaoAccount kakaoAccount) {
+        return ofKaKao(userNameAttributeName, attributes, kakaoAccount);
     }
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
@@ -41,27 +48,22 @@ public class OAuthAttributes {
                 .build();
     }
 
-//    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-//        String providerId = attributes.get("sub").toString();
-//        String provider = ProviderType.NAVER.getTitle();
-//        return OAuthAttributes.builder()
-//                .name((String) attributes.get("name"))
-//                .email((String) attributes.get("email"))
+    private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes, NaverAccount naverAccount) {
+        return OAuthAttributes.builder()
+                .name(naverAccount.getName())
+                .email(naverAccount.getEmail())
 //                .picture((String) attributes.get("picture"))
-//                .attributes(attributes)
-//                .nameAttributeKey(userNameAttributeName)
-//                .build();
-//    }
-//
-//    private static OAuthAttributes ofKaKao(String userNameAttributeName, Map<String, Object> attributes) {
-//        return OAuthAttributes.builder()
-//                .name((String) attributes.get("name"))
-//                .email((String) attributes.get("email"))
-//                .picture((String) attributes.get("picture"))
-//                .attributes(attributes)
-//                .nameAttributeKey(userNameAttributeName)
-//                .build();
-//    }
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
+    private static OAuthAttributes ofKaKao(String userNameAttributeName, Map<String, Object> attributes, KakaoAccount kakaoAccount) {
+        return OAuthAttributes.builder()
+                .email((String) kakaoAccount.getKakaoAccount().get("email"))
+                .attributes(attributes)
+                .nameAttributeKey(userNameAttributeName)
+                .build();
+    }
 
     public User toEntity() {
         return User.builder()

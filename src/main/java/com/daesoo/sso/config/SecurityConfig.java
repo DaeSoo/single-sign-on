@@ -1,8 +1,11 @@
 package com.daesoo.sso.config;
 
-import com.daesoo.sso.member.entity.enums.Role;
-import com.daesoo.sso.member.service.CustomOAuth2UserService;
+import com.daesoo.sso.member.entity.enums.ProviderType;
+import com.daesoo.sso.oauth2.service.CustomOAuth2UserService;
+import com.daesoo.sso.oauth2.dto.KakaoAccount;
+import com.daesoo.sso.oauth2.dto.NaverAccount;
 import com.daesoo.sso.oidc.service.CustomOidcUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +17,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 
 @Configuration
@@ -29,7 +34,6 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomOidcUserService customOidcUserService;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -55,13 +59,23 @@ public class SecurityConfig {
     }
     @Bean
     public AuthenticationSuccessHandler successHandler() {
+        ObjectMapper objectMapper = new ObjectMapper();
         return ((request, response, authentication) -> {
             DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
-            String id = defaultOAuth2User.getAttributes().get("email").toString();
+            String id = "";
+
+            if(ProviderType.GOOGLE.getTitle().equals(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId())){
+                id = defaultOAuth2User.getAttributes().get("email").toString();
+            }else if(ProviderType.NAVER.getTitle().equals(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId())){
+                id = objectMapper.convertValue(defaultOAuth2User.getAttributes().get("response"), NaverAccount.class).getEmail();
+            }else if(ProviderType.KAKAO.getTitle().equals(((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId())){
+                KakaoAccount kakaoAccount = new KakaoAccount((Map)defaultOAuth2User.getAttributes().get("kakao_account"), "id");
+                id = ((String) kakaoAccount.getKakaoAccount().get("email"));
+            }
             String body = """
-                    {"id":"%s"}
-                    """.formatted(id);
+                    {"email":"%s", "provider_type" : "%s"}
+                    """.formatted(id,((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId());
 
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
